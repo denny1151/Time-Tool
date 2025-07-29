@@ -1,315 +1,265 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小工具</title>
-    <style>
-        body {
-            background-color: #333333;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-            line-height: 1.5;
-            padding: 20px;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>小工具</title>
+  <style>
+    body {
+      background-color: #333;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      padding: 20px;
+    }
 
-        .input-container {
-            margin: 20px 0;
-            text-align: center;
-        }
+    .input-container {
+      margin: 20px 0;
+      text-align: center;
+    }
 
-        #numberInput {
-            width: 200px;
-            height: 40px;
-            font-size: 18px;
-            padding: 5px;
-            margin-right: 10px;
-            background-color: #444444;
-            color: #ffffff;
-            border: 1px solid #555555;
-            border-radius: 5px;
-        }
+    #numberInput {
+      width: 200px;
+      height: 40px;
+      font-size: 18px;
+      padding: 5px;
+      margin-right: 10px;
+      background-color: #444;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 5px;
+    }
 
-        #numberInput::placeholder {
-            color: #aaaaaa;
-        }
+    #confirmBtn {
+      height: 40px;
+      font-size: 18px;
+      padding: 0 20px;
+      background-color: #555;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-        #confirmBtn {
-            height: 40px;
-            font-size: 18px;
-            padding: 0 20px;
-            background-color: #555555;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    #confirmBtn:hover {
+      background-color: #777;
+    }
 
-        #confirmBtn:hover {
-            background-color: #777777;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      color: #fff;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            color: #ffffff;
-        }
+    th, td {
+      border: 1px solid #555;
+      padding: 10px;
+      text-align: center;
+    }
 
-        th, td {
-            border: 1px solid #555555;
-            padding: 10px;
-            text-align: center;
-        }
+    th {
+      background-color: #444;
+    }
 
-        th {
-            background-color: #444444;
-        }
+    tr {
+      background-color: #222;
+      transition: background-color 0.3s ease;
+    }
 
-        tr {
-            background-color: #222222;
-            transition: background-color 0.3s ease;
-        }
+    tr:hover {
+      background-color: #333;
+    }
 
-        tr:hover {
-            background-color: #333333;
-        }
+    tr.lightgreen {
+      background-color: #006400;
+    }
 
-        tr.lightgreen {
-            background-color: #006400;
-        }
+    tr.lightgray {
+      background-color: #555;
+    }
 
-        tr.lightgray {
-            background-color: #555555;
-        }
+    .resetBtn, .deleteBtn {
+      background-color: #555;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
 
-        .resetBtn, .deleteBtn {
-            background-color: #555555;
-            color: #ffffff;
-            border: none;
-            padding: 5px 10px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
+    .resetBtn:hover, .deleteBtn:hover {
+      background-color: #777;
+    }
 
-        .resetBtn:hover, .deleteBtn:hover {
-            background-color: #777777;
-        }
+    #errorMessage {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
 
-        #errorMessage {
-            color: red;
-            text-align: center;
-            margin-top: 10px;
-        }
+    @media (max-width: 600px) {
+      #numberInput, #confirmBtn {
+        width: 100%;
+        margin-top: 10px;
+      }
 
-        @media (max-width: 600px) {
-            #numberInput {
-                width: 100%;
-            }
-
-            #confirmBtn {
-                width: 100%;
-                margin-top: 10px;
-            }
-
-            .input-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-    </style>
+      .input-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="input-container">
-        <input type="number" id="numberInput" placeholder="輸入數字">
-        <button id="confirmBtn">確定</button>
-    </div>
-    <div id="errorMessage"></div>
-    <table id="dataTable">
-        <thead>
-            <tr>
-                <th>頻道</th>
-                <th>時間</th>
-                <th>時間 +45分</th>
-                <th>時間 +1小時8分</th>
-                <th>重置</th>
-                <th>刪除</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- 這裡將動態添加行 -->
-        </tbody>
-    </table>
-    <script>
+  <div class="input-container">
+    <input type="number" id="numberInput" placeholder="輸入數字" />
+    <button id="confirmBtn">確定</button>
+  </div>
+  <div id="errorMessage"></div>
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>頻道</th>
+        <th>時間</th>
+        <th>時間 +45分</th>
+        <th>時間 +1小時8分</th>
+        <th>重置</th>
+        <th>刪除</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-        // 按下確定按鈕生成新行
-        document.getElementById('confirmBtn').addEventListener('click', function() {
-            const number = document.getElementById('numberInput').value;
-            if (!number) {
-                document.getElementById('errorMessage').textContent = '請輸入數字';
-                return;
-            }
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      push,
+      onValue,
+      update,
+      remove
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-            const now = new Date();
-            const confirmTime = formatTime(now);
-            const plus45Min = addMinutes(now, 45);
-            const plus1Hr9Min = addMinutes(now, 69);
+    const firebaseConfig = {
+      apiKey: "AIzaSyCW3OnDcUJufnBheW2dNIp1n56I_F0u3YI",
+      authDomain: "time-tool-510c6.firebaseapp.com",
+      databaseURL: "https://time-tool-510c6-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "time-tool-510c6",
+      storageBucket: "time-tool-510c6.appspot.com",
+      messagingSenderId: "39463921944",
+      appId: "1:39463921944:web:f3237fd5c26a60e6dcd66d"
+    };
 
-            try {
-                database.ref('rows').push({
-                    number: number,
-                    confirmTime: confirmTime,
-                    plus45Min: formatTime(plus45Min),
-                    plus1Hr9Min: formatTime(plus1Hr9Min),
-                    date: now.toDateString()
-                });
-                document.getElementById('errorMessage').textContent = '';
-                document.getElementById('numberInput').value = '';
-            } catch (error) {
-                document.getElementById('errorMessage').textContent = '無法儲存數據: ' + error.message;
-                console.error(error);
-            }
-        });
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
 
-        // 監聽 Firebase 數據變化，更新表格
-        if (database) {
-            database.ref('rows').on('value', (snapshot) => {
-                const tbody = document.querySelector('#dataTable tbody');
-                tbody.innerHTML = '';
-                snapshot.forEach((child) => {
-                    const data = child.val();
-                    const row = document.createElement('tr');
-                    row.dataset.date = data.date;
-                    row.dataset.key = child.key;
-                    row.innerHTML = `
-                        <td>${data.number}</td>
-                        <td>${data.confirmTime}</td>
-                        <td>${data.plus45Min}</td>
-                        <td>${data.plus1Hr9Min}</td>
-                        <td><button class="resetBtn" data-key="${child.key}">重置</button></td>
-                        <td><button class="deleteBtn" data-key="${child.key}">刪除</button></td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            }, (error) => {
-                document.getElementById('errorMessage').textContent = '無法讀取數據: ' + error.message;
-                console.error(error);
-            });
-        }
+    const input = document.getElementById('numberInput');
+    const errorMessage = document.getElementById('errorMessage');
+    const tbody = document.querySelector('#dataTable tbody');
 
-        // 處理重置和刪除按鈕的事件
-        document.querySelector('#dataTable tbody').addEventListener('click', function(e) {
-            const row = e.target.closest('tr');
-            if (!row) return;
+    document.getElementById('confirmBtn').addEventListener('click', async () => {
+      const number = input.value;
+      if (!number) {
+        errorMessage.textContent = '請輸入數字';
+        return;
+      }
 
-            const key = e.target.dataset.key;
-            if (!key) return;
-
-            if (e.target.classList.contains('resetBtn')) {
-                const now = new Date();
-                const confirmTime = formatTime(now);
-                const plus45Min = addMinutes(now, 45);
-                const plus1Hr9Min = addMinutes(now, 69);
-
-                try {
-                    database.ref('rows/' + key).update({
-                        confirmTime: confirmTime,
-                        plus45Min: formatTime(plus45Min),
-                        plus1Hr9Min: formatTime(plus1Hr9Min),
-                        date: now.toDateString()
-                    }).then(() => {
-                        database.ref('rows/' + key).once('value', (snapshot) => {
-                            const data = snapshot.val();
-                            database.ref('rows/' + key).remove();
-                            database.ref('rows').push(data);
-                        });
-                    });
-                    document.getElementById('errorMessage').textContent = '';
-                } catch (error) {
-                    document.getElementById('errorMessage').textContent = '無法重置數據: ' + error.message;
-                    console.error(error);
-                }
-            }
-
-            if (e.target.classList.contains('deleteBtn')) {
-                try {
-                    database.ref('rows/' + key).remove();
-                    document.getElementById('errorMessage').textContent = '';
-                } catch (error) {
-                    document.getElementById('errorMessage').textContent = '無法刪除數據: ' + error.message;
-                    console.error(error);
-                }
-            }
-        });
-
-        // 實時檢查時間並更新背景色
-        setInterval(function() {
-            const now = new Date();
-            const rows = document.querySelectorAll('#dataTable tbody tr');
-            rows.forEach(row => {
-                const rowDate = new Date(row.dataset.date);
-                const plus45MinStr = row.cells[2].textContent;
-                const plus1Hr9MinStr = row.cells[3].textContent;
-                const plus45Min = parseTime(plus45MinStr, rowDate);
-                const plus1Hr9Min = parseTime(plus1Hr9MinStr, rowDate);
-
-                if (now >= plus1Hr9Min) {
-                    row.classList.remove('lightgreen');
-                    row.classList.add('lightgray');
-                } else if (now >= plus45Min) {
-                    row.classList.remove('lightgray');
-                    row.classList.add('lightgreen');
-                } else {
-                    row.classList.remove('lightgreen', 'lightgray');
-                }
-            });
-        }, 1000);
-
-        // 輔助函數：格式化時間為 HH:MM:SS
-        function formatTime(date) {
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            // const seconds = String(date.getSeconds()).padStart(2, '0');
-            return `${hours}:${minutes}`; // :${seconds}
-        }
- 
-        // 輔助函數：將時間字符串解析為 Date 對象
-        function parseTime(timeStr, baseDate) {
-            const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-            const date = new Date(baseDate);
-            date.setHours(hours, minutes, seconds || 0, 0);
-            return date;
-        }
-
-        // 輔助函數：增加指定分鐘數
-        function addMinutes(date, minutes) {
-            const newDate = new Date(date);
-            newDate.setMinutes(newDate.getMinutes() + minutes);
-            return newDate;
-        }
-    </script>
-    <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-      // TODO: Add SDKs for Firebase products that you want to use
-      // https://firebase.google.com/docs/web/setup#available-libraries
-    
-      // Your web app's Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyCW3OnDcUJufnBheW2dNIp1n56I_F0u3YI",
-        authDomain: "time-tool-510c6.firebaseapp.com",
-        databaseURL: "https://time-tool-510c6-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "time-tool-510c6",
-        storageBucket: "time-tool-510c6.firebasestorage.app",
-        messagingSenderId: "39463921944",
-        appId: "1:39463921944:web:f3237fd5c26a60e6dcd66d"
+      const now = new Date();
+      const data = {
+        number,
+        confirmTime: formatTime(now),
+        plus45Min: formatTime(addMinutes(now, 45)),
+        plus1Hr9Min: formatTime(addMinutes(now, 69)),
+        date: now.toDateString()
       };
-    
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-    </script>
+
+      try {
+        await push(ref(database, 'rows'), data);
+        input.value = '';
+        errorMessage.textContent = '';
+      } catch (error) {
+        errorMessage.textContent = '無法儲存數據: ' + error.message;
+      }
+    });
+
+    onValue(ref(database, 'rows'), (snapshot) => {
+      tbody.innerHTML = '';
+      snapshot.forEach((child) => {
+        const data = child.val();
+        const row = document.createElement('tr');
+        row.dataset.date = data.date;
+        row.dataset.key = child.key;
+
+        row.innerHTML = `
+          <td>${data.number}</td>
+          <td>${data.confirmTime}</td>
+          <td>${data.plus45Min}</td>
+          <td>${data.plus1Hr9Min}</td>
+          <td><button class="resetBtn" data-key="${child.key}">重置</button></td>
+          <td><button class="deleteBtn" data-key="${child.key}">刪除</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    });
+
+    tbody.addEventListener('click', async (e) => {
+      const key = e.target.dataset.key;
+      if (!key) return;
+
+      const rowRef = ref(database, 'rows/' + key);
+
+      if (e.target.classList.contains('resetBtn')) {
+        const now = new Date();
+        const updated = {
+          confirmTime: formatTime(now),
+          plus45Min: formatTime(addMinutes(now, 45)),
+          plus1Hr9Min: formatTime(addMinutes(now, 69)),
+          date: now.toDateString()
+        };
+        await update(rowRef, updated);
+      }
+
+      if (e.target.classList.contains('deleteBtn')) {
+        await remove(rowRef);
+      }
+    });
+
+    setInterval(() => {
+      const now = new Date();
+      document.querySelectorAll('#dataTable tbody tr').forEach(row => {
+        const baseDate = new Date(row.dataset.date);
+        const plus45 = parseTime(row.cells[2].textContent, baseDate);
+        const plus69 = parseTime(row.cells[3].textContent, baseDate);
+
+        row.classList.remove('lightgreen', 'lightgray');
+        if (now >= plus69) {
+          row.classList.add('lightgray');
+        } else if (now >= plus45) {
+          row.classList.add('lightgreen');
+        }
+      });
+    }, 1000);
+
+    function formatTime(date) {
+      return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    }
+
+    function addMinutes(date, mins) {
+      const d = new Date(date);
+      d.setMinutes(d.getMinutes() + mins);
+      return d;
+    }
+
+    function parseTime(str, baseDate) {
+      const [h, m] = str.split(':').map(Number);
+      const d = new Date(baseDate);
+      d.setHours(h, m, 0, 0);
+      return d;
+    }
+  </script>
 </body>
 </html>
