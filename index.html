@@ -77,11 +77,11 @@
         }
 
         tr.lightgreen {
-            background-color: #006400; /* 深綠色 */
+            background-color: #006400;
         }
 
-        tr.darkred {
-            background-color: #5c0505; /* 深紅色 */
+        tr.lightgray {
+            background-color: #555555;
         }
 
         .resetBtn, .deleteBtn {
@@ -96,6 +96,12 @@
 
         .resetBtn:hover, .deleteBtn:hover {
             background-color: #777777;
+        }
+
+        #errorMessage {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
         }
 
         @media (max-width: 600px) {
@@ -121,92 +127,144 @@
         <input type="number" id="numberInput" placeholder="輸入數字">
         <button id="confirmBtn">確定</button>
     </div>
-
+    <div id="errorMessage"></div>
     <table id="dataTable">
         <thead>
             <tr>
                 <th>頻道</th>
-                <th>紀錄時間</th>
-                <th>+45分</th>
-                <th>+1小時8分</th>
+                <th>時間</th>
+                <th>時間 +45分</th>
+                <th>時間 +1時9分</th>
                 <th>重置</th>
                 <th>刪除</th>
             </tr>
         </thead>
         <tbody>
+            <!-- 這裡將動態添加行 -->
         </tbody>
     </table>
-    <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
 
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyCW3OnDcUJufnBheW2dNIp1n56I_F0u3YI",
-        authDomain: "time-tool-510c6.firebaseapp.com",
-        databaseURL: "https://time-tool-510c6-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "time-tool-510c6",
-        storageBucket: "time-tool-510c6.firebasestorage.app",
-        messagingSenderId: "39463921944",
-        appId: "1:39463921944:web:d23df9af98c603a8dcd66d"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
     <script>
+        // Firebase 配置（請替換為您自己的 Firebase 項目配置）
+        const firebaseConfig = {
+            apiKey: "AIzaSyCW3OnDcUJufnBheW2dNIp1n56I_F0u3YI",
+            authDomain: "time-tool-510c6.firebaseapp.com",
+            databaseURL: "https://time-tool-510c6-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "time-tool-510c6",
+            storageBucket: "time-tool-510c6.firebasestorage.app",
+            messagingSenderId: "39463921944",
+            appId: "1:39463921944:web:d23df9af98c603a8dcd66d"
+        };
+
+        // 初始化 Firebase
+        let database;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+        } catch (error) {
+            document.getElementById('errorMessage').textContent = 'Firebase 初始化失敗: ' + error.message;
+            console.error(error);
+        }
+
         // 按下確定按鈕生成新行
         document.getElementById('confirmBtn').addEventListener('click', function() {
             const number = document.getElementById('numberInput').value;
-            if (!number) return; // 如果沒有輸入數字，則不做任何事
+            if (!number) {
+                document.getElementById('errorMessage').textContent = '請輸入數字';
+                return;
+            }
 
             const now = new Date();
             const confirmTime = formatTime(now);
             const plus45Min = addMinutes(now, 45);
-            const plus1Hr8Min = addMinutes(now, 68); // 1小時8分鐘 = 68分鐘
+            const plus1Hr9Min = addMinutes(now, 69);
 
-            const row = document.createElement('tr');
-            row.dataset.date = now.toDateString();
-            row.innerHTML = `
-                <td>${number}</td>
-                <td>${confirmTime}</td>
-                <td>${formatTime(plus45Min)}</td>
-                <td>${formatTime(plus1Hr8Min)}</td>
-                <td><button class="resetBtn">重置</button></td>
-                <td><button class="deleteBtn">刪除</button></td>
-            `;
-
-            document.querySelector('#dataTable tbody').appendChild(row);
-            document.getElementById('numberInput').value = '';
+            try {
+                database.ref('rows').push({
+                    number: number,
+                    confirmTime: confirmTime,
+                    plus45Min: formatTime(plus45Min),
+                    plus1Hr9Min: formatTime(plus1Hr9Min),
+                    date: now.toDateString()
+                });
+                document.getElementById('errorMessage').textContent = '';
+                document.getElementById('numberInput').value = '';
+            } catch (error) {
+                document.getElementById('errorMessage').textContent = '無法儲存數據: ' + error.message;
+                console.error(error);
+            }
         });
 
+        // 監聽 Firebase 數據變化，更新表格
+        if (database) {
+            database.ref('rows').on('value', (snapshot) => {
+                const tbody = document.querySelector('#dataTable tbody');
+                tbody.innerHTML = '';
+                snapshot.forEach((child) => {
+                    const data = child.val();
+                    const row = document.createElement('tr');
+                    row.dataset.date = data.date;
+                    row.dataset.key = child.key;
+                    row.innerHTML = `
+                        <td>${data.number}</td>
+                        <td>${data.confirmTime}</td>
+                        <td>${data.plus45Min}</td>
+                        <td>${data.plus1Hr9Min}</td>
+                        <td><button class="resetBtn" data-key="${child.key}">重置</button></td>
+                        <td><button class="deleteBtn" data-key="${child.key}">刪除</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }, (error) => {
+                document.getElementById('errorMessage').textContent = '無法讀取數據: ' + error.message;
+                console.error(error);
+            });
+        }
+
+        // 處理重置和刪除按鈕的事件
         document.querySelector('#dataTable tbody').addEventListener('click', function(e) {
             const row = e.target.closest('tr');
             if (!row) return;
 
-            // 重置
+            const key = e.target.dataset.key;
+            if (!key) return;
+
             if (e.target.classList.contains('resetBtn')) {
                 const now = new Date();
-                row.dataset.date = now.toDateString();
                 const confirmTime = formatTime(now);
                 const plus45Min = addMinutes(now, 45);
-                const plus1Hr8Min = addMinutes(now, 68);
+                const plus1Hr9Min = addMinutes(now, 69);
 
-                row.cells[1].textContent = confirmTime;
-                row.cells[2].textContent = formatTime(plus45Min);
-                row.cells[3].textContent = formatTime(plus1Hr8Min);
-
-                // 移動到表格最下方
-                const tbody = row.parentNode;
-                tbody.removeChild(row);
-                tbody.appendChild(row);
+                try {
+                    database.ref('rows/' + key).update({
+                        confirmTime: confirmTime,
+                        plus45Min: formatTime(plus45Min),
+                        plus1Hr9Min: formatTime(plus1Hr9Min),
+                        date: now.toDateString()
+                    }).then(() => {
+                        database.ref('rows/' + key).once('value', (snapshot) => {
+                            const data = snapshot.val();
+                            database.ref('rows/' + key).remove();
+                            database.ref('rows').push(data);
+                        });
+                    });
+                    document.getElementById('errorMessage').textContent = '';
+                } catch (error) {
+                    document.getElementById('errorMessage').textContent = '無法重置數據: ' + error.message;
+                    console.error(error);
+                }
             }
 
-            // 刪除
             if (e.target.classList.contains('deleteBtn')) {
-                row.remove();
+                try {
+                    database.ref('rows/' + key).remove();
+                    document.getElementById('errorMessage').textContent = '';
+                } catch (error) {
+                    document.getElementById('errorMessage').textContent = '無法刪除數據: ' + error.message;
+                    console.error(error);
+                }
             }
         });
 
@@ -217,31 +275,31 @@
             rows.forEach(row => {
                 const rowDate = new Date(row.dataset.date);
                 const plus45MinStr = row.cells[2].textContent;
-                const plus1Hr8MinStr = row.cells[3].textContent;
+                const plus1Hr9MinStr = row.cells[3].textContent;
                 const plus45Min = parseTime(plus45MinStr, rowDate);
-                const plus1Hr8Min = parseTime(plus1Hr8MinStr, rowDate);
+                const plus1Hr9Min = parseTime(plus1Hr9MinStr, rowDate);
 
-                if (now >= plus1Hr8Min) {
+                if (now >= plus1Hr9Min) {
                     row.classList.remove('lightgreen');
-                    row.classList.add('darkred');
+                    row.classList.add('lightgray');
                 } else if (now >= plus45Min) {
-                    row.classList.remove('darkred');
+                    row.classList.remove('lightgray');
                     row.classList.add('lightgreen');
                 } else {
-                    row.classList.remove('lightgreen', 'darkred');
+                    row.classList.remove('lightgreen', 'lightgray');
                 }
             });
-        }, 1000); // 每秒檢查一次
+        }, 1000);
 
-        // 格式化時間為 HH:MM
+        // 輔助函數：格式化時間為 HH:MM:SS
         function formatTime(date) {
             const hours = String(date.getHours()).padStart(2, '0');
             const minutes = String(date.getMinutes()).padStart(2, '0');
             // const seconds = String(date.getSeconds()).padStart(2, '0');
             return `${hours}:${minutes}`; // :${seconds}
         }
-
-        // 解析時間str
+ 
+        // 輔助函數：將時間字符串解析為 Date 對象
         function parseTime(timeStr, baseDate) {
             const [hours, minutes, seconds] = timeStr.split(':').map(Number);
             const date = new Date(baseDate);
@@ -249,7 +307,7 @@
             return date;
         }
 
-        // 增加指定分鐘
+        // 輔助函數：增加指定分鐘數
         function addMinutes(date, minutes) {
             const newDate = new Date(date);
             newDate.setMinutes(newDate.getMinutes() + minutes);
