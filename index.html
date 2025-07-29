@@ -173,7 +173,7 @@
         number,
         confirmTime: formatTime(now),
         plus45Min: formatTime(addMinutes(now, 45)),
-        plus1Hr9Min: formatTime(addMinutes(now, 69)),
+        plus1Hr8Min: formatTime(addMinutes(now, 68)),
         date: now.toDateString()
       };
 
@@ -198,7 +198,7 @@
           <td>${data.number}</td>
           <td>${data.confirmTime}</td>
           <td>${data.plus45Min}</td>
-          <td>${data.plus1Hr9Min}</td>
+          <td>${data.plus1Hr8Min}</td>
           <td><button class="resetBtn" data-key="${child.key}">重置</button></td>
           <td><button class="deleteBtn" data-key="${child.key}">刪除</button></td>
         `;
@@ -217,7 +217,7 @@
         const updated = {
           confirmTime: formatTime(now),
           plus45Min: formatTime(addMinutes(now, 45)),
-          plus1Hr9Min: formatTime(addMinutes(now, 69)),
+          plus1Hr8Min: formatTime(addMinutes(now, 68)),
           date: now.toDateString()
         };
         await update(rowRef, updated);
@@ -233,10 +233,10 @@
       document.querySelectorAll('#dataTable tbody tr').forEach(row => {
         const baseDate = new Date(row.dataset.date);
         const plus45 = parseTime(row.cells[2].textContent, baseDate);
-        const plus69 = parseTime(row.cells[3].textContent, baseDate);
+        const plus68 = parseTime(row.cells[3].textContent, baseDate);
 
         row.classList.remove('lightgreen', 'lightgray');
-        if (now >= plus69) {
+        if (now >= plus68) {
           row.classList.add('lightgray');
         } else if (now >= plus45) {
           row.classList.add('lightgreen');
