@@ -143,26 +143,6 @@
             <!-- 這裡將動態添加行 -->
         </tbody>
     </table>
-    <script type="module">
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://time-tool-510c6-default-rtdb.asia-southeast1.firebasedatabase.app/";
-      // TODO: Add SDKs for Firebase products that you want to use
-      // https://firebase.google.com/docs/web/setup#available-libraries
-    
-      // Your web app's Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyCW3OnDcUJufnBheW2dNIp1n56I_F0u3YI",
-        authDomain: "time-tool-510c6.firebaseapp.com",
-        databaseURL: "https://time-tool-510c6-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "time-tool-510c6",
-        storageBucket: "time-tool-510c6.firebasestorage.app",
-        messagingSenderId: "39463921944",
-        appId: "1:39463921944:web:f3237fd5c26a60e6dcd66d"
-      };
-    
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-    </script>
     <script>
 
         // 按下確定按鈕生成新行
@@ -310,6 +290,26 @@
             newDate.setMinutes(newDate.getMinutes() + minutes);
             return newDate;
         }
+    </script>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+    
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCW3OnDcUJufnBheW2dNIp1n56I_F0u3YI",
+        authDomain: "time-tool-510c6.firebaseapp.com",
+        databaseURL: "https://time-tool-510c6-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "time-tool-510c6",
+        storageBucket: "time-tool-510c6.firebasestorage.app",
+        messagingSenderId: "39463921944",
+        appId: "1:39463921944:web:f3237fd5c26a60e6dcd66d"
+      };
+    
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
     </script>
 </body>
 </html>
