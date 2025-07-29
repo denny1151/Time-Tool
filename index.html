@@ -79,8 +79,8 @@
       background-color: #006400;
     }
 
-    tr.lightgray {
-      background-color: #555;
+    tr.darkred {
+      background-color: #530505;
     }
 
     .resetBtn, .deleteBtn {
@@ -261,9 +261,9 @@
         const plus45 = parseTime(row.cells[2].textContent, baseDate);
         const plus68 = parseTime(row.cells[3].textContent, baseDate);
 
-        row.classList.remove('lightgreen', 'lightgray');
+        row.classList.remove('lightgreen', 'darkred');
         if (now >= plus68) {
-          row.classList.add('lightgray');
+          row.classList.add('darkred');
         } else if (now >= plus45) {
           row.classList.add('lightgreen');
         }
