@@ -30,6 +30,10 @@
       border-radius: 5px;
     }
 
+    #numberInput::placeholder {
+      color: #aaa;
+    }
+
     #confirmBtn {
       height: 40px;
       font-size: 18px;
@@ -141,7 +145,8 @@
       push,
       onValue,
       update,
-      remove
+      remove,
+      get
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
     const firebaseConfig = {
@@ -183,6 +188,7 @@
         errorMessage.textContent = '';
       } catch (error) {
         errorMessage.textContent = '無法儲存數據: ' + error.message;
+        console.error(error);
       }
     });
 
@@ -204,6 +210,9 @@
         `;
         tbody.appendChild(row);
       });
+    }, (error) => {
+      errorMessage.textContent = '無法讀取數據: ' + error.message;
+      console.error(error);
     });
 
     tbody.addEventListener('click', async (e) => {
@@ -215,16 +224,33 @@
       if (e.target.classList.contains('resetBtn')) {
         const now = new Date();
         const updated = {
+          number: (await get(rowRef)).val().number, // 保留原始數字
           confirmTime: formatTime(now),
           plus45Min: formatTime(addMinutes(now, 45)),
           plus1Hr8Min: formatTime(addMinutes(now, 68)),
           date: now.toDateString()
         };
-        await update(rowRef, updated);
+
+        try {
+          // 先移除原數據
+          await remove(rowRef);
+          // 重新 push 以確保新數據在 rows 末尾
+          await push(ref(database, 'rows'), updated);
+          errorMessage.textContent = '';
+        } catch (error) {
+          errorMessage.textContent = '無法重置數據: ' + error.message;
+          console.error(error);
+        }
       }
 
       if (e.target.classList.contains('deleteBtn')) {
-        await remove(rowRef);
+        try {
+          await remove(rowRef);
+          errorMessage.textContent = '';
+        } catch (error) {
+          errorMessage.textContent = '無法刪除數據: ' + error.message;
+          console.error(error);
+        }
       }
     });
 
