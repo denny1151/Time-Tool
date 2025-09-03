@@ -328,14 +328,22 @@
     const bellWidget = document.querySelector('.bell-widget');
     const bellPopup = document.querySelector('.bell-popup');
     if (bellWidget && bellPopup) {
-      // Images for bell popup
-      const bellImages = [
-        'https://media.discordapp.net/attachments/1412678781453467739/1412679764959035412/image0.jpg?ex=68b92c0e&is=68b7da8e&hm=88b6aa662ac692e5694da2db40a6236bff5830eb10a647813c6e90e2292b3a8e&=&format=webp',
+      // Images for bell popup (use DOM's first src to avoid duplication)
+      const bellImgEl = bellPopup.querySelector('.bell-image');
+      const bellImages = [];
+      if (bellImgEl && bellImgEl.getAttribute('src')) {
+        bellImages.push(bellImgEl.getAttribute('src'));
+      }
+      // Append remaining images here (no duplicate of the first URL)
+      bellImages.push(
         'https://media.discordapp.net/attachments/1412678781453467739/1412706173110583347/image0.jpg?ex=68b944a6&is=68b7f326&hm=245bfa2acf0c3cc9c3e3a637e1bb9cf325e558c5349485c323422835817d7b0c&=&format=webp&width=186&height=262',
         'https://media.discordapp.net/attachments/1412678781453467739/1412706407169527860/image0.jpg?ex=68b944de&is=68b7f35e&hm=b9e28333a09bcc58f336b7555913349b53ecb8129ef8e2e9def6d00772eeccc1&=&format=webp&width=175&height=262'
-      ];
+      );
       let bellIdx = 0;
-      const bellImgEl = bellPopup.querySelector('.bell-image');
+      // Preload images and remove any redundant hidden image under .bell-popup
+      bellImages.forEach((u) => { const img = new Image(); img.src = u; });
+      const redundantHidden = bellPopup.querySelector(':scope > img');
+      if (redundantHidden) redundantHidden.remove();
       const bellPrev = bellPopup.querySelector('.bell-prev');
       const bellNext = bellPopup.querySelector('.bell-next');
       const renderBell = () => {
